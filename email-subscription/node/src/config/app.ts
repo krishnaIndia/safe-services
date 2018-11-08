@@ -1,5 +1,5 @@
 const whiteListedDomains= {
-	'http://localhost:8080': 'dc4963cfc1',
+	'http://localhost:8080': '61ce397f57',
 };
 
 export default {
