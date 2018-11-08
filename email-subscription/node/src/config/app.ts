@@ -1,5 +1,6 @@
 const whiteListedDomains= {
-	'http://localhost:8080': '61ce397f57',
+	'https://safenetwork.tech': '61ce397f57',
+	'https://deploy-preview-115--keen-stonebraker-bb1a10.netlify.com/': '61ce397f57',
 };
 
 export default {

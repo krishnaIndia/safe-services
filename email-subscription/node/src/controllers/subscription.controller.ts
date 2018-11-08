@@ -5,10 +5,24 @@ import * as EmailValidator from "email-validator";
 import AppConfig from "../config/app";
 
 export default class Subscription {
+  apiKey: 'string';
   mailChimp: Mailchimp;
   constructor(apiKey) {
-    this.mailChimp = new Mailchimp(apiKey);
+    this.apiKey = apiKey;
+    this.mailChimp = null;
   }
+
+  get mailChimpApi() {
+    try {
+      if (!this.mailChimp) {
+        this.mailChimp = new Mailchimp(this.apiKey)
+      }
+      return this.mailChimp;
+    } catch(e) {
+      return;
+    }
+  }
+
 
   async subscribe(req: Request, res: Response) {
     const origin = req.headers["origin"];
@@ -27,24 +41,30 @@ export default class Subscription {
     }
     const listId = AppConfig.getListId(origin);
     const memberId = crypto.createHash("md5").update(email).digest("hex");
+
+    const mailChimp = this.mailChimpApi;
+
+    if (!mailChimp) {
+      return res.status(500).send('Failed to initialise mail server');
+    }
+
     try {
-      const userInfo = await this.mailChimp.get(`/lists/${listId}/members/${memberId}`);
+      const userInfo = await mailChimp.get(`/lists/${listId}/members/${memberId}`);
       if (userInfo.status === "subscribed") {
         return res.status(400).send("Email is already subscribed.");
       }
       try {
-        await this.mailChimp.patch(`/lists/${listId}/members/${memberId}`, {
+        await mailChimp.patch(`/lists/${listId}/members/${memberId}`, {
           status: "subscribed"
         });
       } catch(e) {
         console.error('PATCH error', e);
-        return res.send(e.status || 400).send(e.detail || e);
       }
       res.status(200).send("OK");
     } catch(e) {
       try {
         const subscribeUrl = `/lists/${listId}/members`;
-        await this.mailChimp.request({
+        await mailChimp.request({
           method: "post",
           path: subscribeUrl,
           body: {
