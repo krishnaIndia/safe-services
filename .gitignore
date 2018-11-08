@@ -1,3 +1,6 @@
+# email-subscriber
+/email-subscription/node/src/config/cred.ts
+
 # Executables
 *.exe
 *.out
