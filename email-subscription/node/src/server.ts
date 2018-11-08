@@ -7,7 +7,6 @@ import * as lusca from "lusca";
 import * as dotenv from "dotenv";
 import * as flash from "express-flash";
 import * as clear from "clear-console";
-import * as chalk from "chalk";
 import * as cors from "cors";
 import * as expressValidator from "express-validator";
 
@@ -41,12 +40,12 @@ APIRouter(app);
 app.use(errorHandler());
 
 app.listen(app.get("port"), () => {
-  console.info(chalk.green("Node server compiled successfully!"));
+  console.info("Node server compiled successfully!");
   console.info(
     "App is running at " +
-      chalk.bold("http://localhost:" + app.get("port")) +
+      "http://localhost:" + app.get("port") +
       " in " +
-      chalk.bold(app.get("env").toUpperCase()) +
+      app.get("env").toUpperCase() +
       " mode"
   );
 });
