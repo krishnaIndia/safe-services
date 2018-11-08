@@ -29,15 +29,16 @@ export default class Subscription {
     const memberId = crypto.createHash("md5").update(email).digest("hex");
     try {
       const userInfo = await this.mailChimp.get(`/lists/${listId}/members/${memberId}`);
-      if (userInfo.status !== "subscribed") {
-        try {
-          await this.mailChimp.patch(`/lists/${listId}/members/${memberId}`, {
-            status: "subscribed"
-          });
-        } catch(e) {
-          console.error('PATCH error', e);
-          return res.send(e.status || 400).send(e);
-        }
+      if (userInfo.status === "subscribed") {
+        return res.status(400).send("Email is already subscribed.");
+      }
+      try {
+        await this.mailChimp.patch(`/lists/${listId}/members/${memberId}`, {
+          status: "subscribed"
+        });
+      } catch(e) {
+        console.error('PATCH error', e);
+        return res.send(e.status || 400).send(e.detail || e);
       }
       res.status(200).send("OK");
     } catch(e) {
@@ -54,7 +55,7 @@ export default class Subscription {
         res.status(200).send("OK");
       } catch(e) {
         console.error('POST error', e);
-        return res.status(e.status || 400).send(e);
+        return res.status(e.status || 400).send(e.detail || e);
       }
     }
   }
