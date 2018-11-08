@@ -12,14 +12,14 @@ export default class Subscription {
     this.mailChimp = null;
   }
 
-  getMailChimp() {
+  get mailChimpApi() {
     try {
       if (!this.mailChimp) {
         this.mailChimp = new Mailchimp(this.apiKey)
       }
       return this.mailChimp;
-    } catch(err) {
-      throw err;
+    } catch(e) {
+      return;
     }
   }
 
@@ -42,15 +42,10 @@ export default class Subscription {
     const listId = AppConfig.getListId(origin);
     const memberId = crypto.createHash("md5").update(email).digest("hex");
 
-    let mailChimp = null;
+    const mailChimp = this.mailChimpApi;
 
-    try {
-      mailChimp = this.getMailChimp();
-      if (!mailChimp) {
-        return res.status(400).send('Invalid mail server object');
-      }
-    } catch(err) {
-      return res.status(500).send('Failed to initialise with mail server');
+    if (!mailChimp) {
+      return res.status(500).send('Failed to initialise mail server');
     }
 
     try {
