@@ -1,10 +1,10 @@
-# safenetwork.tech email subscription
+# Safe Network email subscription
 
 ### Getting started
 
-#### Add Cred.ts file
+#### Add cred.ts file
 
-Add cred.ts with the content
+Add `cred.ts` with the content
 ```
 export default {
 	mailChimpApiKey: 'api-key'
